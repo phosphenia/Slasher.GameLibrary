@@ -1,4 +1,4 @@
-﻿namespace Slasher.GameLibrary;
+﻿namespace Slasher.GameLibrary.Enums;
 
 public enum TileType
 {

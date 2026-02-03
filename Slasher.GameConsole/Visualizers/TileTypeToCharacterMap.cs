@@ -1,4 +1,4 @@
-﻿using Slasher.GameLibrary;
+﻿using Slasher.GameLibrary.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;

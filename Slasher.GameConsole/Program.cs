@@ -1,15 +1,17 @@
 ﻿using Slasher.GameConsole.Visualizers;
 using Slasher.GameLibrary;
+using Slasher.GameLibrary.Biomes;
+using Slasher.GameLibrary.Interfaces;
 
 namespace Slasher.GameConsole;
 
 internal class Program
 {
-    static GameMap gameMap;
+    static IBiome Biome = new GrassLands();
+    static GameMap GameMap = new GameMap(40, 30, Biome);
     static void Main(string[] args)
     {
-        gameMap = new GameMap(8, 8);
-        DrawMap(gameMap);
+        DrawMap(GameMap);
     }
 
     private static void DrawMap(GameMap mapToDraw)
@@ -27,10 +29,10 @@ internal class Program
 
     private static void DrawTile(int x, int y)
     {
-        var tileType = gameMap.Tiles[x, y];
+        var tileType = GameMap.Tiles[x, y];
         char displayCharacter = TileTypeToCharacterMap.Dictionary[tileType];
 
-        Console.SetCursorPosition(x*2, y);
+        Console.SetCursorPosition(x, y);
         Console.Write(displayCharacter);
     }
 }
