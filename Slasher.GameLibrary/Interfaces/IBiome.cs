@@ -8,8 +8,16 @@ namespace Slasher.GameLibrary.Interfaces
     public interface IBiome
     {
         public string Name { get; }
-        public Dictionary<TileType, int> TileTypeWeight { get; }
+        public abstract Dictionary<TileType, int> TileTypeWeight { get; }
+        public int GetTotalWeight()
+        {
+            int totalWeight = 0;
 
-        int GetTotalWeight();
+            foreach (var item in TileTypeWeight)
+            {
+                totalWeight += item.Value;
+            }
+            return totalWeight;
+        }
     }
 }

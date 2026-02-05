@@ -5,5 +5,5 @@ public enum TileType
     Empty,
     Grass,
     Water,
-    Rock
+    Rock,
 }

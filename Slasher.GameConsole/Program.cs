@@ -2,6 +2,7 @@
 using Slasher.GameLibrary;
 using Slasher.GameLibrary.Biomes;
 using Slasher.GameLibrary.Interfaces;
+using Slasher.GameLibrary.Enums;
 
 namespace Slasher.GameConsole;
 
