@@ -10,9 +10,25 @@ internal class Program
 {
     static IBiome Biome = new GrassLands();
     static GameMap GameMap = new GameMap(40, 30, Biome);
+    static int[] SpawnLocation = new int[2]
+    {
+        20, 15
+    };
+    static EntityType Player = EntityType.Player;
+    
     static void Main(string[] args)
     {
         DrawMap(GameMap);
+        DrawPlayer();
+    }
+
+    private static void DrawPlayer()
+    {
+        char playerDisplayCharacter = EntityTypeToCharacter.Dictionary[Player];
+
+        Console.SetCursorPosition(SpawnLocation[0], SpawnLocation[1]);
+        Console.Write(playerDisplayCharacter);
+        Console.SetCursorPosition(0, 30);
     }
 
     private static void DrawMap(GameMap mapToDraw)
@@ -30,7 +46,7 @@ internal class Program
 
     private static void DrawTile(int x, int y)
     {
-        var tileType = GameMap.Tiles[x, y];
+        TileType tileType = GameMap.Tiles[x, y];
         char displayCharacter = TileTypeToCharacterMap.Dictionary[tileType];
 
         Console.SetCursorPosition(x, y);

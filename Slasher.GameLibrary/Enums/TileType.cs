@@ -4,6 +4,9 @@ public enum TileType
 {
     Empty,
     Grass,
+    SGrass,
     Water,
+    SWater,
     Rock,
+    SRock
 }

@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Slasher.GameLibrary.Enums
+namespace Slasher.GameLibrary.Enums;
+
+public enum EntityType
 {
-    internal enum EntityType
-    {
-        Empty,
-        Player,
-        Enemy
-    }
+    Empty,
+    Player,
+    Enemy
 }

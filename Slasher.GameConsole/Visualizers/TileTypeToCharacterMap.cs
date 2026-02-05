@@ -7,9 +7,9 @@ namespace Slasher.GameConsole.Visualizers;
 
 public static class TileTypeToCharacterMap
 {
-    public static Dictionary<Enum, char> Dictionary = new Dictionary<Enum, char>() {
-        { (Enum) TileType.Empty, ' '},
-        { (Enum) TileType.Grass, '.'},
-        { (Enum) TileType.Water, '-'},
-        { (Enum) TileType.Rock, '*'}};
+    public static Dictionary<TileType, char> Dictionary = new () {
+        { TileType.Empty , ' '},
+        { TileType.Grass , '.'},
+        { TileType.Water, '~'},
+        { TileType.Rock, '*'}};
 }
