@@ -12,27 +12,42 @@ public class Program
     private static IBiome Biome = new GrassLands();
     private static GameMap GameMap = new GameMap(40, 30, Biome);
     private static int[] SpawnLocation = new int[2] { 20, 15 };
-    private static EntityType Player = EntityType.Player;
+    private static Player Player = new();
     
     
     public static void Main(string[] args)
     {
         DrawMap(GameMap);
         DrawPlayer();
+
+        ReadActionInput();
     }
+
 
     private static void DrawPlayer()
     {
-        char playerDisplayCharacter = EntityTypeToCharacter.Dictionary[Player];
+        Player.DisplayCharacter = EntityTypeToCharacter.Dictionary[Player.EntityType];
+        Player.Location = SpawnLocation;
+        ReDrawPlayer(0, 0);
+    }
 
-        Console.SetCursorPosition(SpawnLocation[0], SpawnLocation[1]);
-        Console.Write(playerDisplayCharacter);
-        Console.SetCursorPosition(0, 30);
+    private static void ReDrawPlayer(int modX, int modY)
+    {
+        int[] modLocation = { Player.Location[0] + modX, Player.Location[1] + modY };
+
+        if (modLocation[0] < GameMap.Tiles.GetLength(0) && modLocation[0] >= 0 && modLocation[1] < GameMap.Tiles.GetLength(1) && modLocation[1] >= 0)
+        {
+            DrawTile(Player.Location[0], Player.Location[1]);
+            Player.Location = modLocation;
+            Console.SetCursorPosition(Player.Location[0], Player.Location[1]);
+            Console.Write(Player.DisplayCharacter);
+            Console.SetCursorPosition(0, 30); 
+        }
     }
 
     private static void DrawMap(GameMap mapToDraw)
     {
-        Console.Clear();
+    Console.Clear();
         for (int x = 0; x < mapToDraw.Tiles.GetLength(0); x++)
         {
             for (int y = 0; y < mapToDraw.Tiles.GetLength(1); y++)
@@ -40,7 +55,7 @@ public class Program
                 DrawTile(x, y);
             }
 
-        }
+}
     }
 
     private static void DrawTile(int x, int y)
@@ -54,5 +69,40 @@ public class Program
 
         Console.SetCursorPosition(x, y);
         Console.Write(displayCharacter);
+}
+    private static void ReadActionInput()
+    {
+        ConsoleKey key;
+
+        do
+        {
+            while (!Console.KeyAvailable)
+            {
+                //No key has been pressed yet
+            }
+
+            key = Console.ReadKey(true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.W:
+                    ReDrawPlayer(0, -1);
+                    break;
+
+                case ConsoleKey.S:
+                    ReDrawPlayer(0, 1);
+                    break;
+
+                case ConsoleKey.A:
+                    ReDrawPlayer(-1, 0);
+                    break;
+
+                case ConsoleKey.D:
+                    ReDrawPlayer(1, 0);
+                    break;
+            }
+
+
+        } while (key != ConsoleKey.Escape /* && player.IsAlive*/);
     }
 }

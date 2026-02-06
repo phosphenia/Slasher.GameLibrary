@@ -62,49 +62,19 @@ public class GameMap
     }
 
     private void GrowTile(int x, int y)
-    {
-        Enum coreType = Tiles[x, y];
-        GrowthTileType growthType = (GrowthTileType)coreType;
+    { 
+        GrowthTileType growthType = (GrowthTileType) Tiles[x, y];
         (int, int)[] surroundingTiles = GetSurroundingTiles(x, y);
 
-        foreach ((int, int) item in surroundingTiles)
+        foreach ((int sx, int sy) in surroundingTiles)
         {
-            if (item.Item1 - x == 0 && 0 < item.Item2 && item.Item2 < y)
+            if (sx >= 0 && sx < Tiles.GetLength(0) && sy >= 0 && sy < Tiles.GetLength(1))
             {
-                Tiles[item.Item1, item.Item2] = growthType;
+                Tiles[sx, sy] = growthType;
             }
-            else if (item.Item1 < x)
-            {
-                Tiles[item.Item1, item.Item2] = growthType;
-            }
-        }
-
-        //x + 1 Tile
-        if (Tiles.GetLength(0) > x + 1)
-        {
-            Tiles[x + 1, y] = growthType;
-        }
-
-        //y + 1 Tile
-        if (Tiles.GetLength(1) > y + 1)
-        { 
-            Tiles[x, y + 1] = growthType;
-        }
-
-        //y - 1 Tile
-        if (y > 0)
-        {
-            Tiles[x, y - 1] = growthType;
-        }
-
-        //x - 1 Tile
-        if (x > 0)
-        {
-            Tiles[x - 1, y] = growthType;
         }
     }
-
-    //For later growth possibilities
+    
     private void GeneralizeAllTiles()
     {
         for(int x = 0; x < Tiles.GetLength(0); x++)
