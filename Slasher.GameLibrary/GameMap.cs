@@ -1,101 +1,135 @@
 ﻿using Slasher.GameLibrary.Enums;
 using Slasher.GameLibrary.Interfaces;
+using System;
 
-namespace Slasher.GameLibrary
+namespace Slasher.GameLibrary;
+
+public class GameMap
 {
-    public class GameMap
+    public Enum[,] Tiles { get; set; }
+
+    public GameMap(int width, int height, IBiome biome)
     {
-        public TileType[,] Tiles { get; set; }
+        Tiles = new Enum[width, height];
+        GenerateBaseMap(biome);
+        GrowAllTiles();
+        GeneralizeAllTiles();
+    }
 
-        public GameMap(int width, int height, IBiome biome)
+    private void GenerateBaseMap(IBiome biome)
+    {
+
+        int totalWeight = biome.GetTotalWeight();
+        var possibleValues = Enum.GetValues<TileType>();
+        int runningTotalWeight = 0;
+        Dictionary<int, TileType> tileBoundaryList = new();
+
+        foreach (var item in biome.TileTypeWeight)
         {
-            Tiles = new TileType[width, height];
-            GenerateBaseMap(biome);
-            GrowAllTiles();
-            GeneralizeAllTiles();
+            runningTotalWeight += item.Value;
+            tileBoundaryList.Add(runningTotalWeight, item.Key);
         }
 
-        private void GenerateBaseMap(IBiome biome)
+        tileBoundaryList.OrderDescending();
+
+        for (int x = 0; x < Tiles.GetLength(0); x++)
         {
-
-            int totalWeight = biome.GetTotalWeight();
-            var possibleValues = Enum.GetValues<TileType>();
-            int runningTotalWeight = 0;
-            Dictionary<int, TileType> tileBoundaryList = new();
-
-            foreach (var item in biome.TileTypeWeight)
+            for (int y = 0; y < Tiles.GetLength(1); y++)
             {
-                runningTotalWeight += item.Value;
-                tileBoundaryList.Add(runningTotalWeight, item.Key);
-            }
-
-            tileBoundaryList.OrderDescending();
-
-            for (int x = 0; x < Tiles.GetLength(0); x++)
-            {
-                for (int y = 0; y < Tiles.GetLength(1); y++)
-                {
-                    int randomNumber = Random.Shared.Next(totalWeight);
-                    
-                    Tiles[x, y] = tileBoundaryList.SkipWhile(x => x.Key <= randomNumber).FirstOrDefault().Value;
-                    
-                }
+                int randomNumber = Random.Shared.Next(totalWeight);
+                
+                Tiles[x, y] = tileBoundaryList.SkipWhile(x => x.Key <= randomNumber).FirstOrDefault().Value;
+                
             }
         }
+    }
 
-        private void GrowAllTiles()
+    private void GrowAllTiles()
+    {
+        for (int x = 0; x < Tiles.GetLength(0); x++)
         {
-            for (int x = 0; x < Tiles.GetLength(0); x++)
+            for (int y = 0; y < Tiles.GetLength(1); y++)
             {
-                for (int y = 0; y < Tiles.GetLength(1); y++)
+                if (Tiles[x, y] is TileType)
                 {
-                    if ((TileType)Tiles[x, y] != TileType.Empty && (int)Tiles[x, y] % 2 == 1)
+                    if (GrowableData.CanGrow(Tiles[x, y]))
                     {
                         GrowTile(x, y);
                     }
                 }
             }
         }
+    }
 
-        private void GrowTile(int x, int y)
+    private void GrowTile(int x, int y)
+    {
+        Enum coreType = Tiles[x, y];
+        GrowthTileType growthType = (GrowthTileType)coreType;
+        (int, int)[] surroundingTiles = GetSurroundingTiles(x, y);
+
+        foreach ((int, int) item in surroundingTiles)
         {
-            TileType coreType = (TileType)Tiles[x, y];
-            TileType growthType = (TileType)((int) coreType + 1);
-            if (Tiles.GetLength(0) > x + 1 && Tiles[x + 1, y] == TileType.Empty)
+            if (item.Item1 - x == 0 && 0 < item.Item2 && item.Item2 < y)
             {
-                Tiles[x + 1, y] = growthType;
+                Tiles[item.Item1, item.Item2] = growthType;
             }
-            if (Tiles.GetLength(1) > y + 1 && (TileType) Tiles[x, y + 1] == TileType.Empty)
+            else if (item.Item1 < x)
             {
-                Tiles[x, y + 1] = growthType;
-            }
-            if (y > 0 && (TileType) Tiles[x, y - 1] == TileType.Empty)
-            {
-                Tiles[x, y - 1] = growthType;
-            }
-            if (x > 0 && (TileType) Tiles[x - 1, y] == TileType.Empty)
-            {
-                Tiles[x - 1, y] = growthType;
+                Tiles[item.Item1, item.Item2] = growthType;
             }
         }
 
-        private void GeneralizeAllTiles()
+        //x + 1 Tile
+        if (Tiles.GetLength(0) > x + 1)
         {
-            for(int x = 0; x < Tiles.GetLength(0); x++)
-            {
-                for (int y = 0; y < Tiles.GetLength(1); y++)
-                {
-                    GeneralizeTile(x, y);
-                }
-            }
+            Tiles[x + 1, y] = growthType;
         }
 
-        private void GeneralizeTile(int x, int y)
+        //y + 1 Tile
+        if (Tiles.GetLength(1) > y + 1)
+        { 
+            Tiles[x, y + 1] = growthType;
+        }
+
+        //y - 1 Tile
+        if (y > 0)
         {
-            if ((TileType) Tiles[x, y] != TileType.Empty && (int)Tiles[x, y] % 2 == 0)
+            Tiles[x, y - 1] = growthType;
+        }
+
+        //x - 1 Tile
+        if (x > 0)
+        {
+            Tiles[x - 1, y] = growthType;
+        }
+    }
+
+    //For later growth possibilities
+    private void GeneralizeAllTiles()
+    {
+        for(int x = 0; x < Tiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < Tiles.GetLength(1); y++)
             {
-                Tiles[x, y] = (TileType)((int)Tiles[x, y] - 1);
+                GeneralizeTile(x, y);
             }
         }
+    }
+
+    private void GeneralizeTile(int x, int y)
+    {
+        if (Tiles[x, y] is not TileType)
+        {
+            Tiles[x, y] = (TileType) Tiles[x, y];
+        }
+    }
+
+    private (int, int)[] GetSurroundingTiles(int x, int y)
+    {
+        return new (int x, int y)[]
+        {
+            (x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1) 
+        };
+
     }
 }

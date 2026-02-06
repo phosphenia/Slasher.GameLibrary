@@ -1,12 +1,11 @@
-﻿namespace Slasher.GameLibrary.Enums;
+﻿using System.ComponentModel;
+
+namespace Slasher.GameLibrary.Enums;
 
 public enum TileType
 {
     Empty,
     Grass,
-    SGrass,
     Water,
-    SWater,
     Rock,
-    SRock
 }

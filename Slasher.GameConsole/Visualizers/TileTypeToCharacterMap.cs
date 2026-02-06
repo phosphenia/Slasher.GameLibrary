@@ -7,9 +7,9 @@ namespace Slasher.GameConsole.Visualizers;
 
 public static class TileTypeToCharacterMap
 {
-    public static Dictionary<TileType, char> Dictionary = new () {
-        { TileType.Empty , ' '},
-        { TileType.Grass , '.'},
-        { TileType.Water, '~'},
-        { TileType.Rock, '*'}};
+    public static Dictionary<int, char> Dictionary = new () {
+        { (int) TileType.Empty, ' '},
+        { (int) TileType.Grass, '.'},
+        { (int) TileType.Water, '~'},
+        { (int) TileType.Rock, '*'}};
 }

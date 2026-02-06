@@ -3,20 +3,19 @@ using Slasher.GameLibrary;
 using Slasher.GameLibrary.Biomes;
 using Slasher.GameLibrary.Interfaces;
 using Slasher.GameLibrary.Enums;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Slasher.GameConsole;
 
-internal class Program
+public class Program
 {
-    static IBiome Biome = new GrassLands();
-    static GameMap GameMap = new GameMap(40, 30, Biome);
-    static int[] SpawnLocation = new int[2]
-    {
-        20, 15
-    };
-    static EntityType Player = EntityType.Player;
+    private static IBiome Biome = new GrassLands();
+    private static GameMap GameMap = new GameMap(40, 30, Biome);
+    private static int[] SpawnLocation = new int[2] { 20, 15 };
+    private static EntityType Player = EntityType.Player;
     
-    static void Main(string[] args)
+    
+    public static void Main(string[] args)
     {
         DrawMap(GameMap);
         DrawPlayer();
@@ -46,7 +45,11 @@ internal class Program
 
     private static void DrawTile(int x, int y)
     {
-        TileType tileType = GameMap.Tiles[x, y];
+        int tileType = 0;
+
+        if (GameMap.Tiles[x, y] is TileType t) { tileType = (int) t; }
+        if (GameMap.Tiles[x, y] is GrowthTileType g) { tileType = (int) g; }
+
         char displayCharacter = TileTypeToCharacterMap.Dictionary[tileType];
 
         Console.SetCursorPosition(x, y);
