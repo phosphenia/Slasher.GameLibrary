@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\MyToolBox\ToolKit\ToolKit.csproj" />
+  </ItemGroup>
+
 </Project>

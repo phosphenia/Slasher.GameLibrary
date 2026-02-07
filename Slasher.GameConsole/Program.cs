@@ -11,36 +11,40 @@ public class Program
 {
     private static IBiome Biome = new GrassLands();
     private static GameMap GameMap = new GameMap(40, 30, Biome);
-    private static int[] SpawnLocation = new int[2] { 20, 15 };
     private static Player Player = new();
+
+    //TODO replace {Enemy Enemy} with {Enemy[] Enemies}.
+    private static Enemy Enemy = new();
     
     
     public static void Main(string[] args)
     {
         DrawMap(GameMap);
-        DrawPlayer();
+        DrawEntity(Player);
+        //TODO implement enemy-spawning system.
+        DrawEntity(Enemy);
 
         ReadActionInput();
     }
 
 
-    private static void DrawPlayer()
+    private static void DrawEntity(Entity subject)
     {
-        Player.DisplayCharacter = EntityTypeToCharacter.Dictionary[Player.EntityType];
-        Player.Location = SpawnLocation;
-        ReDrawPlayer(0, 0);
+        subject.DisplayCharacter = EntityTypeToCharacter.Dictionary[subject.EntityType];
+        subject.Location = subject.SpawnLocation;
+        ReDrawEntity(subject, 0, 0);
     }
 
-    private static void ReDrawPlayer(int modX, int modY)
+    private static void ReDrawEntity(Entity subject, int modX, int modY)
     {
-        int[] modLocation = { Player.Location[0] + modX, Player.Location[1] + modY };
+        int[] modLocation = { subject.Location[0] + modX, subject.Location[1] + modY };
 
         if (modLocation[0] < GameMap.Tiles.GetLength(0) && modLocation[0] >= 0 && modLocation[1] < GameMap.Tiles.GetLength(1) && modLocation[1] >= 0)
         {
-            DrawTile(Player.Location[0], Player.Location[1]);
-            Player.Location = modLocation;
-            Console.SetCursorPosition(Player.Location[0], Player.Location[1]);
-            Console.Write(Player.DisplayCharacter);
+            DrawTile(subject.Location[0], subject.Location[1]);
+            subject.Location = modLocation;
+            Console.SetCursorPosition(subject.Location[0], subject.Location[1]);
+            Console.Write(subject.DisplayCharacter);
             Console.SetCursorPosition(0, 30); 
         }
     }
@@ -86,23 +90,41 @@ public class Program
             switch (key)
             {
                 case ConsoleKey.W:
-                    ReDrawPlayer(0, -1);
+                    ReDrawEntity(Player, 0, -1);
                     break;
 
                 case ConsoleKey.S:
-                    ReDrawPlayer(0, 1);
+                    ReDrawEntity(Player, 0, 1);
                     break;
 
                 case ConsoleKey.A:
-                    ReDrawPlayer(-1, 0);
+                    ReDrawEntity(Player, -1, 0);
                     break;
 
                 case ConsoleKey.D:
-                    ReDrawPlayer(1, 0);
+                    ReDrawEntity(Player, 1, 0);
                     break;
             }
+            AdvanceTick();
 
 
         } while (key != ConsoleKey.Escape /* && player.IsAlive*/);
+    }
+
+    private static void AdvanceTick()
+    {
+        //Temp Enemy AdvanceTick logic.
+
+        int[] movementVector = Enemy.AdvanceTick(Player.Location);
+        ReDrawEntity(Enemy, movementVector[0], movementVector[1]);
+        Console.WriteLine($"Lortet virker sgu {Player.Location[0]} {Player.Location[1]} {movementVector[0]} {movementVector[1]} ");
+
+        //Enemy[] AdvanceTick logic.
+        /*int[] movementVector = new int[2];
+        foreach (Enemy item in Enemies)
+        {
+            movementVector = item.AdvanceTick(Player.Location);
+            ReDrawEntity(item, movementVector[0], movementVector[1]);
+        }*/
     }
 }

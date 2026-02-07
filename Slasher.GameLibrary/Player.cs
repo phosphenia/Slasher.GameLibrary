@@ -5,11 +5,12 @@ using System.Text;
 
 namespace Slasher.GameLibrary
 {
-    public class Player
+    public class Player : Entity
     {
-        public string Name { get; } = "Oliver";
-        public EntityType EntityType { get; } = EntityType.Player;
-        public int[] Location { get; set; }
-        public char DisplayCharacter { get; set; }
+        public Player()
+        {
+            EntityType = EntityType.Player;
+            SpawnLocation = new int[2] { 20, 15 };
+        }
     }
 }
