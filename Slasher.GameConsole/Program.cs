@@ -4,6 +4,7 @@ using Slasher.GameLibrary.Biomes;
 using Slasher.GameLibrary.Interfaces;
 using Slasher.GameLibrary.Enums;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace Slasher.GameConsole;
 
@@ -12,6 +13,7 @@ public class Program
     private static IBiome Biome = new GrassLands();
     private static GameMap GameMap = new GameMap(40, 30, Biome);
     private static Player Player = new();
+    private static bool Advance;
 
     //TODO replace {Enemy Enemy} with {Enemy[] Enemies}.
     private static Enemy Enemy = new();
@@ -23,6 +25,7 @@ public class Program
         DrawEntity(Player);
         //TODO implement enemy-spawning system.
         DrawEntity(Enemy);
+        DrawPlayerInfo();
 
         ReadActionInput();
     }
@@ -73,7 +76,70 @@ public class Program
 
         Console.SetCursorPosition(x, y);
         Console.Write(displayCharacter);
-}
+    }
+
+    private static void DrawPlayerInfo()
+    {
+        int healthPoints = Player.HealthPoints;
+        int remainder = healthPoints % Player.HealthPointRollOver;
+        
+        if (remainder != 0) { healthPoints -= healthPoints % Player.HealthPointRollOver; }
+        DrawHealth(healthPoints / Player.HealthPointRollOver, remainder);
+    }
+
+    private static void DrawHealth(int numberOfHearts, int remainder)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+
+        switch (numberOfHearts)
+        {
+            case 1:
+                for (int i = 1; i < Player.HealthPointRollOver + 1; i++)
+                {
+                    DrawHeart(i * 2, GameMap.Tiles.GetLength(1) + 1, numberOfHearts);
+                }
+                break;
+
+            case 2:
+                for (int i = 1; i < Player.HealthPointRollOver + 1; i++)
+                {
+                    DrawHeart(i * 2, GameMap.Tiles.GetLength(1) + 1, numberOfHearts);
+                }
+                break;
+
+            case 3:
+                for (int i = 1; i < Player.HealthPointRollOver + 1; i++)
+                {
+                    DrawHeart(i * 2, GameMap.Tiles.GetLength(1) + 1, numberOfHearts);
+                }
+                break;
+
+            case 4:
+                for (int i = 1; i < Player.HealthPointRollOver + 1; i++)
+                {
+                    DrawHeart(i * 2, GameMap.Tiles.GetLength(1) + 1, numberOfHearts);
+                }
+                break;
+        }
+
+        if (remainder != 0)
+        {
+            for (int i = 1; i < remainder + 1; i++)
+            {
+                if (numberOfHearts == 4) { Console.ForegroundColor = ConsoleColor.Yellow; numberOfHearts -= 1; }
+                DrawHeart(i * 2, GameMap.Tiles.GetLength(1) + 1, numberOfHearts + 1);
+            }
+        }
+
+        Console.ResetColor();
+    }
+
+    private static void DrawHeart(int x, int y, int heartId)
+    {
+        Console.SetCursorPosition(x, y);
+        Console.Write(AsciiHolder.Heart[heartId - 1]);
+    }
+
     private static void ReadActionInput()
     {
         ConsoleKey key;
@@ -91,20 +157,26 @@ public class Program
             {
                 case ConsoleKey.W:
                     ReDrawEntity(Player, 0, -1);
+                    Advance = true;
                     break;
 
                 case ConsoleKey.S:
                     ReDrawEntity(Player, 0, 1);
+                    Advance = true;
                     break;
 
                 case ConsoleKey.A:
                     ReDrawEntity(Player, -1, 0);
+                    Advance = true;
                     break;
 
                 case ConsoleKey.D:
                     ReDrawEntity(Player, 1, 0);
+                    Advance = true;
                     break;
             }
+
+
             AdvanceTick();
 
 
@@ -113,18 +185,21 @@ public class Program
 
     private static void AdvanceTick()
     {
-        //Temp Enemy AdvanceTick logic.
-
-        int[] movementVector = Enemy.AdvanceTick(Player.Location);
-        ReDrawEntity(Enemy, movementVector[0], movementVector[1]);
-        Console.WriteLine($"Lortet virker sgu {Player.Location[0]} {Player.Location[1]} {movementVector[0]} {movementVector[1]} ");
-
-        //Enemy[] AdvanceTick logic.
-        /*int[] movementVector = new int[2];
-        foreach (Enemy item in Enemies)
+        if (Advance)
         {
-            movementVector = item.AdvanceTick(Player.Location);
-            ReDrawEntity(item, movementVector[0], movementVector[1]);
-        }*/
+            Advance = false;
+            //Temp Enemy AdvanceTick logic.
+
+            int[] movementVector = Enemy.AdvanceTick(Player.Location);
+            ReDrawEntity(Enemy, movementVector[0], movementVector[1]);
+
+            //Enemy[] AdvanceTick logic.
+            /*int[] movementVector = new int[2];
+            foreach (Enemy item in Enemies)
+            {
+                movementVector = item.AdvanceTick(Player.Location);
+                ReDrawEntity(item, movementVector[0], movementVector[1]);
+            }*/ 
+        }
     }
 }

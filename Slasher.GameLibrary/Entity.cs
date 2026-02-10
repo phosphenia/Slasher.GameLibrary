@@ -7,6 +7,7 @@ namespace Slasher.GameLibrary
 {
     public abstract class Entity
     {
+        public int HealthPoints { get; set; }
         public string Name { get; set; }
         public EntityType EntityType { get; set; }
         public int[] SpawnLocation { get; set; }

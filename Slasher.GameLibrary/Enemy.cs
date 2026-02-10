@@ -16,7 +16,7 @@ namespace Slasher.GameLibrary
             int rolledMobility = _mobility;
             if (_mobility > 1)
             {
-                rolledMobility = Random.Shared.Next(_mobility);
+                rolledMobility = Random.Shared.Next(_mobility + 1);
             }
             return rolledMobility;
         }
